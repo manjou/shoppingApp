@@ -1,20 +1,54 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// import the screens
+import ShoppingLists from './components/ShoppingLists';
+import Welcome from './components/Welcome';
 
-export default function App() {
+// import react Navigation
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+// Create the navigator
+const Stack = createNativeStackNavigator();
+
+//importing Initailization for the Firebase
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
+
+const App = () => {
+  const firebaseConfig = {
+    apiKey: "AIzaSyDkd3DVIg-By9zupOJ5U1T9PBZL_UDSOM0",
+    authDomain: "shopping-list-demo-5a740.firebaseapp.com",
+    projectId: "shopping-list-demo-5a740",
+    storageBucket: "shopping-list-demo-5a740.appspot.com",
+    messagingSenderId: "550250686696",
+    appId: "1:550250686696:web:a7ea55253a87defe1c015d",
+    measurementId: "G-D6XY59CEKM"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+  // Initialize Cloud Firestore and get a reference to the service
+  const db = getFirestore(app);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator 
+        initialRouteName='Welcome'
+      >
+        <Stack.Screen name="Welcome" component={Welcome} />
+        <Stack.Screen 
+          name="ShoppingLists"
+        >
+          {props => <ShoppingLists db={db} {...props} />}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+export default App;
+
